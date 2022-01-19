@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  increaseSnake,
   makeMove,
   MOVE_DOWN,
   MOVE_LEFT,
@@ -86,8 +87,9 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
       const posi = generateRandomPosition(width-10, height-10);
       setPos(posi);
       setIsConsumed(false);
+      dispatch(increaseSnake());
     }
-  }, [isConsumed, pos]);
+  }, [isConsumed, pos, height, width, dispatch]);
 
   useEffect(() => {
     //Draw on canvas each time
@@ -112,7 +114,7 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
       window.removeEventListener("keypress", handleKeyEvents);
     } else setGameEnded(false);
 
-  }, [context, pos, snake1, dispatch, handleKeyEvents]);
+  }, [context, pos, snake1, height, width, dispatch, handleKeyEvents]);
 
   useEffect(() => {
     window.addEventListener("keypress", handleKeyEvents);
