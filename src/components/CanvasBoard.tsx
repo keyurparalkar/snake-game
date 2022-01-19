@@ -8,15 +8,21 @@ import {
   MOVE_RIGHT,
   MOVE_UP,
   resetGame,
-  stopGame
+  stopGame,
 } from "../store/actions";
-import { clearCanvas, drawObject, generateRandomPosition, IObjectBody } from "../utils";
+import {
+  clearCanvas,
+  drawObject,
+  generateRandomPosition,
+  hasSnakeCollided,
+  IObjectBody,
+} from "../utils";
 
 export interface ICanvasBoard {
   height: number;
   width: number;
 }
-const CanvasBoard = ({height, width}: ICanvasBoard) => {
+const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const dispatch = useDispatch();
   const snake1 = useSelector((state: any) => state.snake);
   const disallowedDirection = useSelector(
@@ -25,7 +31,9 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
 
   // const [ds, setDs] = useState<string>("");
   const [gameEnded, setGameEnded] = useState<boolean>(false);
-  const [pos, setPos] = useState<IObjectBody>(generateRandomPosition(width-10, height-10));
+  const [pos, setPos] = useState<IObjectBody>(
+    generateRandomPosition(width - 10, height - 10)
+  );
   const [isConsumed, setIsConsumed] = useState<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -77,16 +85,18 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
     dispatch(resetGame());
     clearCanvas(context);
     drawObject(context, snake1);
-    drawObject(context, [generateRandomPosition(width-10, height-10)]); //Draws object randomly
+    drawObject(context, [generateRandomPosition(width - 10, height - 10)]); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
   };
 
   useEffect(() => {
     //Generate new object
-    if(isConsumed){
-      const posi = generateRandomPosition(width-10, height-10);
+    if (isConsumed) {
+      const posi = generateRandomPosition(width - 10, height - 10);
       setPos(posi);
       setIsConsumed(false);
+
+      //Increase snake size when object is consumed successfullyss
       dispatch(increaseSnake());
     }
   }, [isConsumed, pos, height, width, dispatch]);
@@ -99,21 +109,22 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
     drawObject(context, [pos]); //Draws object randomly
 
     //When the object is consumed
-    if(snake1[0].x === pos?.x && snake1[0].y === pos?.y){
+    if (snake1[0].x === pos?.x && snake1[0].y === pos?.y) {
       setIsConsumed(true);
     }
 
     if (
-      snake1[0].x >= width ||
-      snake1[0].x <= 0 ||
-      snake1[0].y <= 0 ||
-      snake1[0].y >= height
+      hasSnakeCollided(snake1, snake1[0]) ||
+      (snake1[0].x >= width ||
+        snake1[0].x <= 0 ||
+        snake1[0].y <= 0 ||
+        snake1[0].y >= height)
     ) {
+      console.log("LINE 127");
       setGameEnded(true);
       dispatch(stopGame());
       window.removeEventListener("keypress", handleKeyEvents);
     } else setGameEnded(false);
-
   }, [context, pos, snake1, height, width, dispatch, handleKeyEvents]);
 
   useEffect(() => {
@@ -129,7 +140,7 @@ const CanvasBoard = ({height, width}: ICanvasBoard) => {
       <canvas
         ref={canvasRef}
         style={{
-          border: `3px solid ${gameEnded ? "red" : "black"}`
+          border: `3px solid ${gameEnded ? "red" : "black"}`,
         }}
         width={width}
         height={height}
