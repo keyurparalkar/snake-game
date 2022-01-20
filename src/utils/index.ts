@@ -17,12 +17,16 @@ export interface IObjectBody {
 
 export const drawObject = (
   context: CanvasRenderingContext2D | null,
-  objectBody: IObjectBody[]
+  objectBody: IObjectBody[],
+  fillColor: string,
+  strokeStyle = "#146356",
 ) => {
   if (context) {
     objectBody.forEach((object: IObjectBody) => {
-      context.fillStyle = "lightblue";
-      context.strokeStyle = "darkblue";
+      // context.fillStyle = "#91C483";
+      // context.strokeStyle = "#557C55";
+      context.fillStyle = fillColor;
+      context.strokeStyle = strokeStyle;
       context?.fillRect(object.x, object.y, 10, 10);
       context?.strokeRect(object.x, object.y, 10, 10);
     });

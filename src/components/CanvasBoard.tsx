@@ -1,3 +1,5 @@
+import { Button } from "@chakra-ui/react";
+import { RepeatIcon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -82,15 +84,15 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     [disallowedDirection, moveSnake]
   );
 
-  const resetBoard = () => {
+  const resetBoard = useCallback(() => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
     dispatch(scoreUpdates("RESET_SCORE"));
     clearCanvas(context);
-    drawObject(context, snake1);
-    drawObject(context, [generateRandomPosition(width - 10, height - 10)]); //Draws object randomly
+    drawObject(context, snake1, "#91C483");
+    drawObject(context, [generateRandomPosition(width - 10, height - 10)], "#676FA3"); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
-  };
+  }, [context, dispatch, handleKeyEvents, height, snake1, width]);
 
   useEffect(() => {
     //Generate new object
@@ -111,8 +113,8 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     //Draw on canvas each time
     setContext(canvasRef.current && canvasRef.current.getContext("2d"));
     clearCanvas(context);
-    drawObject(context, snake1);
-    drawObject(context, [pos]); //Draws object randomly
+    drawObject(context, snake1, "#91C483");
+    drawObject(context, [pos], "#676FA3"); //Draws object randomly
 
     //When the object is consumed
     if (snake1[0].x === pos?.x && snake1[0].y === pos?.y) {
@@ -126,7 +128,6 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         snake1[0].y <= 0 ||
         snake1[0].y >= height)
     ) {
-      console.log("LINE 127");
       setGameEnded(true);
       dispatch(stopGame());
       window.removeEventListener("keypress", handleKeyEvents);
@@ -151,8 +152,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         width={width}
         height={height}
       />
-      <button onClick={() => resetBoard()}>Reset</button>
-      Border Touched: {JSON.stringify(gameEnded)}
+      <Button onClick={() => resetBoard()}><RepeatIcon /></Button>
     </>
   );
 };
