@@ -1,83 +1,61 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import store from "../store";
 import {
+  increaseSnake,
   makeMove,
   MOVE_DOWN,
   MOVE_LEFT,
   MOVE_RIGHT,
   MOVE_UP,
   resetGame,
-  stopGame
+  scoreUpdates,
+  stopGame,
 } from "../store/actions";
 import { IGlobalState } from "../store/reducers";
-import { clearCanvas, drawSnake } from "../utils";
+import {
+  clearCanvas,
+  drawObject,
+  generateRandomPosition,
+  hasSnakeCollided,
+  IObjectBody,
+} from "../utils";
 
-const CanvasBoard = () => {
+export interface ICanvasBoard {
+  height: number;
+  width: number;
+}
+const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const dispatch = useDispatch();
-  const snake1 = useSelector((state: any) => state.snake);
+  const snake1 = useSelector((state: IGlobalState) => state.snake);
   const disallowedDirection = useSelector(
     (state: any) => state.disallowedDirection
   );
 
   // const [ds, setDs] = useState<string>("");
   const [gameEnded, setGameEnded] = useState<boolean>(false);
-
+  const [pos, setPos] = useState<IObjectBody>(
+    generateRandomPosition(width - 10, height - 10)
+  );
+  const [isConsumed, setIsConsumed] = useState<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
 
   const moveSnake = useCallback(
     (dx = 0, dy = 0, ds: string) => {
-      // console.log("cond = ", dx < 0 && dy === 0 && ds !== "LEFT", {
-      //   dx,
-      //   dy,
-      //   ds
-      // });
       if (dx > 0 && dy === 0 && ds !== "RIGHT") {
-        //RIGHT
-        // head = { x: snake1[0].x + dx, y: snake1[0].y + dy };
-        // console.log("SNAKE = ", JSON.stringify({ head, snake }, null, 2));
-
-        // setSnake((preValue: any) => {
-        //   preValue.unshift(head);
-        //   preValue.pop();
-        //   return [...preValue];
-        // });
-        // setDs("LEFT");
         dispatch(makeMove(dx, dy, MOVE_RIGHT));
       }
 
       if (dx < 0 && dy === 0 && ds !== "LEFT") {
-        // head = { x: snake[0].x + dx, y: snake[0].y + dy };
-        // setSnake((preValue: any) => {
-        //   preValue.unshift(head);
-        //   preValue.pop();
-        //   return [...preValue];
-        // });
-        // setDs("RIGHT");
         dispatch(makeMove(dx, dy, MOVE_LEFT));
       }
 
       if (dx === 0 && dy < 0 && ds !== "UP") {
-        // head = { x: snake[0].x + dx, y: snake[0].y + dy };
-        // setSnake((preValue: any) => {
-        //   preValue.unshift(head);
-        //   preValue.pop();
-        //   return [...preValue];
-        // });
         dispatch(makeMove(dx, dy, MOVE_UP));
-        // setDs("DOWN");
       }
 
       if (dx === 0 && dy > 0 && ds !== "DOWN") {
-        // head = { x: snake[0].x + dx, y: snake[0].y + dy };
-        // setSnake((preValue: any) => {
-        //   preValue.unshift(head);
-        //   preValue.pop();
-        //   return [...preValue];
-        // });
         dispatch(makeMove(dx, dy, MOVE_DOWN));
-        // setDs("UP");
       }
     },
     [dispatch]
@@ -107,25 +85,53 @@ const CanvasBoard = () => {
   const resetBoard = () => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
+    dispatch(scoreUpdates("RESET_SCORE"));
     clearCanvas(context);
-    drawSnake(context, snake1);
+    drawObject(context, snake1);
+    drawObject(context, [generateRandomPosition(width - 10, height - 10)]); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
   };
+
   useEffect(() => {
+    //Generate new object
+    if (isConsumed) {
+      const posi = generateRandomPosition(width - 10, height - 10);
+      setPos(posi);
+      setIsConsumed(false);
+
+      //Increase snake size when object is consumed successfully
+      dispatch(increaseSnake());
+
+      //Increment the score
+      dispatch(scoreUpdates("INCREMENT_SCORE"));
+    }
+  }, [isConsumed, pos, height, width, dispatch]);
+
+  useEffect(() => {
+    //Draw on canvas each time
     setContext(canvasRef.current && canvasRef.current.getContext("2d"));
     clearCanvas(context);
-    drawSnake(context, snake1);
+    drawObject(context, snake1);
+    drawObject(context, [pos]); //Draws object randomly
+
+    //When the object is consumed
+    if (snake1[0].x === pos?.x && snake1[0].y === pos?.y) {
+      setIsConsumed(true);
+    }
+
     if (
-      snake1[0].x >= 600 ||
-      snake1[0].x <= 0 ||
-      snake1[0].y <= 0 ||
-      snake1[0].y >= 300
+      hasSnakeCollided(snake1, snake1[0]) ||
+      (snake1[0].x >= width ||
+        snake1[0].x <= 0 ||
+        snake1[0].y <= 0 ||
+        snake1[0].y >= height)
     ) {
+      console.log("LINE 127");
       setGameEnded(true);
       dispatch(stopGame());
       window.removeEventListener("keypress", handleKeyEvents);
     } else setGameEnded(false);
-  }, [context, snake1, dispatch, handleKeyEvents]);
+  }, [context, pos, snake1, height, width, dispatch, handleKeyEvents]);
 
   useEffect(() => {
     window.addEventListener("keypress", handleKeyEvents);
@@ -134,29 +140,17 @@ const CanvasBoard = () => {
       window.removeEventListener("keypress", handleKeyEvents);
     };
   }, [disallowedDirection, handleKeyEvents]);
-  // console.log("STATE = ", context);
+
   return (
     <>
       <canvas
         ref={canvasRef}
         style={{
-          border: `3px solid ${gameEnded ? "red" : "black"}`
+          border: `3px solid ${gameEnded ? "red" : "black"}`,
         }}
-        width={600}
-        height={300}
+        width={width}
+        height={height}
       />
-      {/* <button onClick={() => moveSnake(10, 0, disallowedDirection)}>
-        Move right
-      </button>
-      <button onClick={() => moveSnake(-10, 0, disallowedDirection)}>
-        Move left
-      </button>
-      <button onClick={() => moveSnake(0, -10, disallowedDirection)}>
-        Move up
-      </button>
-      <button onClick={() => moveSnake(0, 10, disallowedDirection)}>
-        Move down
-      </button> */}
       <button onClick={() => resetBoard()}>Reset</button>
       Border Touched: {JSON.stringify(gameEnded)}
     </>

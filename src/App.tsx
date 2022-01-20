@@ -1,5 +1,6 @@
 import { Provider } from "react-redux";
 import CanvasBoard from "./components/CanvasBoard";
+import ScoreCard from "./components/ScoreCard";
 import store from "./store";
 
 const App = () => {
@@ -7,7 +8,8 @@ const App = () => {
     <Provider store={store}>
       <div>
         <h1> SNAKE GAME </h1>
-        <CanvasBoard />
+        <CanvasBoard height={300} width={600}/>
+        <ScoreCard />
       </div>
     </Provider>
   );

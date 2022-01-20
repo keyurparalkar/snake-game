@@ -65,7 +65,6 @@ import {
           break;
       }
       yield delay(100);
-      // counter++;
     }
   }
 
