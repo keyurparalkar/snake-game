@@ -1,9 +1,11 @@
 import {
   DOWN,
   INCREASE_SNAKE,
+  INCREMENT_SCORE,
   ISnakeCoord,
   LEFT,
   RESET,
+  RESET_SCORE,
   RIGHT,
   SET_DIS_DIRECTION,
   UP,
@@ -13,6 +15,7 @@ export interface IGlobalState {
   head: ISnakeCoord;
   snake: ISnakeCoord[] | [];
   disallowedDirection: string;
+  score: number;
 }
 
 const globalState: IGlobalState = {
@@ -28,6 +31,7 @@ const globalState: IGlobalState = {
     { x: 260, y: 150 },
   ],
   disallowedDirection: "",
+  score: 0,
 };
 const gameReducer = (state = globalState, action: any) => {
   switch (action.type) {
@@ -74,6 +78,15 @@ const gameReducer = (state = globalState, action: any) => {
             y: state.snake[snakeLen - 1].y - 10,
           },
         ],
+      };
+
+    case RESET_SCORE:
+      return { ...state, score: 0 };
+
+    case INCREMENT_SCORE:
+      return {
+        ...state,
+        score: state.score + 1,
       };
     default:
       return state;

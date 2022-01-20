@@ -8,8 +8,10 @@ import {
   MOVE_RIGHT,
   MOVE_UP,
   resetGame,
+  scoreUpdates,
   stopGame,
 } from "../store/actions";
+import { IGlobalState } from "../store/reducers";
 import {
   clearCanvas,
   drawObject,
@@ -24,7 +26,7 @@ export interface ICanvasBoard {
 }
 const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const dispatch = useDispatch();
-  const snake1 = useSelector((state: any) => state.snake);
+  const snake1 = useSelector((state: IGlobalState) => state.snake);
   const disallowedDirection = useSelector(
     (state: any) => state.disallowedDirection
   );
@@ -83,6 +85,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const resetBoard = () => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
+    dispatch(scoreUpdates("RESET_SCORE"));
     clearCanvas(context);
     drawObject(context, snake1);
     drawObject(context, [generateRandomPosition(width - 10, height - 10)]); //Draws object randomly
@@ -96,8 +99,11 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
       setPos(posi);
       setIsConsumed(false);
 
-      //Increase snake size when object is consumed successfullyss
+      //Increase snake size when object is consumed successfully
       dispatch(increaseSnake());
+
+      //Increment the score
+      dispatch(scoreUpdates("INCREMENT_SCORE"));
     }
   }, [isConsumed, pos, height, width, dispatch]);
 

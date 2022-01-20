@@ -15,7 +15,8 @@ export const SET_DIS_DIRECTION = "SET_DIS_DIRECTION";
 export const RESET = "RESET";
 export const STOP_GAME = "STOP_GAME";
 export const INCREASE_SNAKE = "INCREASE_SNAKE";
-
+export const INCREMENT_SCORE = "INCREMENT_SCORE";
+export const RESET_SCORE = "RESET_SCORE";
 export interface ISnakeCoord {
   x: number;
   y: number;
@@ -40,4 +41,8 @@ export const stopGame = () => ({
 
 export const increaseSnake = () => ({
   type: INCREASE_SNAKE
+});
+
+export const scoreUpdates = (type: string) => ({
+  type
 });
