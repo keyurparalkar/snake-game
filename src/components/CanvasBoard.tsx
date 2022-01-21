@@ -36,7 +36,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   // const [ds, setDs] = useState<string>("");
   const [gameEnded, setGameEnded] = useState<boolean>(false);
   const [pos, setPos] = useState<IObjectBody>(
-    generateRandomPosition(width - 10, height - 10)
+    generateRandomPosition(width - 20, height - 20)
   );
   const [isConsumed, setIsConsumed] = useState<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -67,17 +67,17 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     (event: KeyboardEvent) => {
       switch (event.key) {
         case "w":
-          moveSnake(0, -10, disallowedDirection);
+          moveSnake(0, -20, disallowedDirection);
           break;
         case "s":
-          moveSnake(0, 10, disallowedDirection);
+          moveSnake(0, 20, disallowedDirection);
           break;
         case "a":
-          moveSnake(-10, 0, disallowedDirection);
+          moveSnake(-20, 0, disallowedDirection);
           break;
         case "d":
           event.preventDefault();
-          moveSnake(10, 0, disallowedDirection);
+          moveSnake(20, 0, disallowedDirection);
           break;
       }
     },
@@ -90,14 +90,14 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     dispatch(scoreUpdates("RESET_SCORE"));
     clearCanvas(context);
     drawObject(context, snake1, "#91C483");
-    drawObject(context, [generateRandomPosition(width - 10, height - 10)], "#676FA3"); //Draws object randomly
+    drawObject(context, [generateRandomPosition(width - 20, height - 20)], "#676FA3"); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
   }, [context, dispatch, handleKeyEvents, height, snake1, width]);
 
   useEffect(() => {
     //Generate new object
     if (isConsumed) {
-      const posi = generateRandomPosition(width - 10, height - 10);
+      const posi = generateRandomPosition(width - 20, height - 20);
       setPos(posi);
       setIsConsumed(false);
 
@@ -152,7 +152,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         width={width}
         height={height}
       />
-      <Button onClick={() => resetBoard()}><RepeatIcon /></Button>
+      <Button onClick={() => resetBoard()}>Reset game<RepeatIcon /></Button>
     </>
   );
 };

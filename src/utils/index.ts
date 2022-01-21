@@ -4,9 +4,9 @@ export const clearCanvas = (context: CanvasRenderingContext2D | null) => {
     //  Select the colour for the border of the canvas
     context.strokeStyle = "white";
     // Draw a "filled" rectangle to cover the entire canvas
-    context.fillRect(0, 0, 600, 300);
+    context.fillRect(0, 0, 1000, 600);
     // Draw a "border" around the entire canvas
-    context.strokeRect(0, 0, 600, 300);
+    context.strokeRect(0, 0, 1000, 600);
   }
 };
 
@@ -19,7 +19,7 @@ export const drawObject = (
   context: CanvasRenderingContext2D | null,
   objectBody: IObjectBody[],
   fillColor: string,
-  strokeStyle = "#146356",
+  strokeStyle = "#146356"
 ) => {
   if (context) {
     objectBody.forEach((object: IObjectBody) => {
@@ -27,14 +27,15 @@ export const drawObject = (
       // context.strokeStyle = "#557C55";
       context.fillStyle = fillColor;
       context.strokeStyle = strokeStyle;
-      context?.fillRect(object.x, object.y, 10, 10);
-      context?.strokeRect(object.x, object.y, 10, 10);
+      context?.fillRect(object.x, object.y, 20, 20);
+      context?.strokeRect(object.x, object.y, 20, 20);
     });
   }
 };
 
 function randomNumber(min: number, max: number) {
-  return Math.round((Math.random() * (max - min) + min) / 10) * 10;
+  let random = Math.random() * max;
+  return random - (random % 20);
 }
 export const generateRandomPosition = (width: number, height: number) => {
   return {

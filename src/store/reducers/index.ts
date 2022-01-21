@@ -24,11 +24,11 @@ const globalState: IGlobalState = {
     y: 0,
   },
   snake: [
-    { x: 300, y: 150 },
-    { x: 290, y: 150 },
-    { x: 280, y: 150 },
-    { x: 270, y: 150 },
-    { x: 260, y: 150 },
+    { x: 500, y: 300 },
+    { x: 580, y: 300 },
+    { x: 560, y: 300 },
+    { x: 540, y: 300 },
+    { x: 520, y: 300 },
   ],
   disallowedDirection: "",
   score: 0,
@@ -59,11 +59,11 @@ const gameReducer = (state = globalState, action: any) => {
       return {
         ...state,
         snake: [
-          { x: 300, y: 150 },
-          { x: 290, y: 150 },
-          { x: 280, y: 150 },
-          { x: 270, y: 150 },
-          { x: 260, y: 150 },
+          { x: 500, y: 300 },
+          { x: 580, y: 300 },
+          { x: 560, y: 300 },
+          { x: 540, y: 300 },
+          { x: 520, y: 300 },
         ],
       };
 
@@ -74,8 +74,8 @@ const gameReducer = (state = globalState, action: any) => {
         snake: [
           ...state.snake,
           {
-            x: state.snake[snakeLen - 1].x - 10,
-            y: state.snake[snakeLen - 1].y - 10,
+            x: state.snake[snakeLen - 1].x - 20,
+            y: state.snake[snakeLen - 1].y - 20,
           },
         ],
       };

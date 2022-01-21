@@ -12,7 +12,7 @@ const App = () => {
         <Container maxW="container.lg" centerContent>
           <Heading>SNAKE GAME</Heading>
           <ScoreCard />
-          <CanvasBoard height={300} width={600} />
+          <CanvasBoard height={600} width={1000} />
           <Instruction/>
         </Container>
       </ChakraProvider>
