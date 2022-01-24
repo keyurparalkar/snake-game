@@ -9,7 +9,7 @@ import {
   MOVE_UP,
   resetGame,
   scoreUpdates,
-  stopGame
+  stopGame,
 } from "../store/actions";
 import { IGlobalState } from "../store/reducers";
 import {
@@ -17,7 +17,7 @@ import {
   drawObject,
   generateRandomPosition,
   hasSnakeCollided,
-  IObjectBody
+  IObjectBody,
 } from "../utils";
 import Instruction from "./Instructions";
 
@@ -29,7 +29,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const dispatch = useDispatch();
   const snake1 = useSelector((state: IGlobalState) => state.snake);
   const disallowedDirection = useSelector(
-    (state: any) => state.disallowedDirection
+    (state: IGlobalState) => state.disallowedDirection
   );
 
   const [gameEnded, setGameEnded] = useState<boolean>(false);
@@ -63,20 +63,30 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
 
   const handleKeyEvents = useCallback(
     (event: KeyboardEvent) => {
-      switch (event.key) {
-        case "w":
-          moveSnake(0, -20, disallowedDirection);
-          break;
-        case "s":
-          moveSnake(0, 20, disallowedDirection);
-          break;
-        case "a":
-          moveSnake(-20, 0, disallowedDirection);
-          break;
-        case "d":
-          event.preventDefault();
-          moveSnake(20, 0, disallowedDirection);
-          break;
+      if (disallowedDirection) {
+        switch (event.key) {
+          case "w":
+            moveSnake(0, -20, disallowedDirection);
+            break;
+          case "s":
+            moveSnake(0, 20, disallowedDirection);
+            break;
+          case "a":
+            moveSnake(-20, 0, disallowedDirection);
+            break;
+          case "d":
+            event.preventDefault();
+            moveSnake(20, 0, disallowedDirection);
+            break;
+        }
+      } else {
+        if (
+          disallowedDirection !== "LEFT" &&
+          disallowedDirection !== "UP" &&
+          disallowedDirection !== "DOWN" &&
+          event.key === "d"
+        )
+          moveSnake(20, 0, disallowedDirection); //Move RIGHT at start
       }
     },
     [disallowedDirection, moveSnake]
@@ -154,7 +164,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         width={width}
         height={height}
       />
-      <Instruction resetBoard={resetBoard}/>
+      <Instruction resetBoard={resetBoard} />
     </>
   );
 };

@@ -65,6 +65,7 @@ const gameReducer = (state = globalState, action: any) => {
           { x: 540, y: 300 },
           { x: 520, y: 300 },
         ],
+        disallowedDirection: ""
       };
 
     case INCREASE_SNAKE:
