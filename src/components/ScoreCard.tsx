@@ -1,10 +1,11 @@
+import { Heading } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { IGlobalState } from "../store/reducers";
 
 const ScoreCard = () => {
     const score = useSelector((state: IGlobalState) => state.score);
     return (
-        <h4>Current Score: {score}</h4>
+        <Heading as="h2" size="md" mt={5} mb={5}>Current Score: {score}</Heading>
     );
 }
 

@@ -1,5 +1,3 @@
-import { Button } from "@chakra-ui/react";
-import { RepeatIcon } from '@chakra-ui/icons';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,7 +9,7 @@ import {
   MOVE_UP,
   resetGame,
   scoreUpdates,
-  stopGame,
+  stopGame
 } from "../store/actions";
 import { IGlobalState } from "../store/reducers";
 import {
@@ -19,8 +17,9 @@ import {
   drawObject,
   generateRandomPosition,
   hasSnakeCollided,
-  IObjectBody,
+  IObjectBody
 } from "../utils";
+import Instruction from "./Instructions";
 
 export interface ICanvasBoard {
   height: number;
@@ -33,7 +32,6 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     (state: any) => state.disallowedDirection
   );
 
-  // const [ds, setDs] = useState<string>("");
   const [gameEnded, setGameEnded] = useState<boolean>(false);
   const [pos, setPos] = useState<IObjectBody>(
     generateRandomPosition(width - 20, height - 20)
@@ -90,7 +88,11 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     dispatch(scoreUpdates("RESET_SCORE"));
     clearCanvas(context);
     drawObject(context, snake1, "#91C483");
-    drawObject(context, [generateRandomPosition(width - 20, height - 20)], "#676FA3"); //Draws object randomly
+    drawObject(
+      context,
+      [generateRandomPosition(width - 20, height - 20)],
+      "#676FA3"
+    ); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
   }, [context, dispatch, handleKeyEvents, height, snake1, width]);
 
@@ -123,10 +125,10 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
 
     if (
       hasSnakeCollided(snake1, snake1[0]) ||
-      (snake1[0].x >= width ||
-        snake1[0].x <= 0 ||
-        snake1[0].y <= 0 ||
-        snake1[0].y >= height)
+      snake1[0].x >= width ||
+      snake1[0].x <= 0 ||
+      snake1[0].y <= 0 ||
+      snake1[0].y >= height
     ) {
       setGameEnded(true);
       dispatch(stopGame());
@@ -152,7 +154,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         width={width}
         height={height}
       />
-      <Button onClick={() => resetBoard()}>Reset game<RepeatIcon /></Button>
+      <Instruction resetBoard={resetBoard}/>
     </>
   );
 };
