@@ -1,11 +1,8 @@
 export const clearCanvas = (context: CanvasRenderingContext2D | null) => {
   if (context) {
     context.fillStyle = "white";
-    //  Select the colour for the border of the canvas
     context.strokeStyle = "white";
-    // Draw a "filled" rectangle to cover the entire canvas
     context.fillRect(0, 0, 1000, 600);
-    // Draw a "border" around the entire canvas
     context.strokeRect(0, 0, 1000, 600);
   }
 };
@@ -23,8 +20,6 @@ export const drawObject = (
 ) => {
   if (context) {
     objectBody.forEach((object: IObjectBody) => {
-      // context.fillStyle = "#91C483";
-      // context.strokeStyle = "#557C55";
       context.fillStyle = fillColor;
       context.strokeStyle = strokeStyle;
       context?.fillRect(object.x, object.y, 20, 20);
