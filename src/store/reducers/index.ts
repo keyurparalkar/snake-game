@@ -12,17 +12,12 @@ import {
 } from "../actions";
 
 export interface IGlobalState {
-  head: ISnakeCoord;
   snake: ISnakeCoord[] | [];
   disallowedDirection: string;
   score: number;
 }
 
 const globalState: IGlobalState = {
-  head: {
-    x: 0,
-    y: 0,
-  },
   snake: [
     { x: 580, y: 300 },
     { x: 560, y: 300 },
@@ -40,10 +35,10 @@ const gameReducer = (state = globalState, action: any) => {
     case UP:
     case DOWN: {
       let newSnake = [...state.snake];
-      newSnake.unshift({
+      newSnake = [{
         x: state.snake[0].x + action.payload[0],
         y: state.snake[0].y + action.payload[1],
-      });
+      }, ...newSnake];
       newSnake.pop();
 
       return {

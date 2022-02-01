@@ -1,9 +1,6 @@
-export const clearCanvas = (context: CanvasRenderingContext2D | null) => {
+export const clearBoard = (context: CanvasRenderingContext2D | null) => {
   if (context) {
-    context.fillStyle = "white";
-    context.strokeStyle = "white";
-    context.fillRect(0, 0, 1000, 600);
-    context.strokeRect(0, 0, 1000, 600);
+    context.clearRect(0, 0, 1000, 600);
   }
 };
 

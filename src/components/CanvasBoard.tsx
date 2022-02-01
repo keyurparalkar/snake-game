@@ -13,7 +13,7 @@ import {
 } from "../store/actions";
 import { IGlobalState } from "../store/reducers";
 import {
-  clearCanvas,
+  clearBoard,
   drawObject,
   generateRandomPosition,
   hasSnakeCollided,
@@ -96,7 +96,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
     dispatch(scoreUpdates("RESET_SCORE"));
-    clearCanvas(context);
+    clearBoard(context);
     drawObject(context, snake1, "#91C483");
     drawObject(
       context,
@@ -124,7 +124,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   useEffect(() => {
     //Draw on canvas each time
     setContext(canvasRef.current && canvasRef.current.getContext("2d"));
-    clearCanvas(context);
+    clearBoard(context);
     drawObject(context, snake1, "#91C483");
     drawObject(context, [pos], "#676FA3"); //Draws object randomly
 
