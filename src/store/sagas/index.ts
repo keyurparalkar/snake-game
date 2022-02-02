@@ -1,25 +1,24 @@
 import {
-    CallEffect,
-    delay,
-    put,
-    PutEffect,
-    SimpleEffect,
-    takeLatest
-  } from "redux-saga/effects";
-  import {
-    DOWN,
-    ISnakeCoord,
-    LEFT,
-    MOVE_DOWN,
-    MOVE_LEFT,
-    MOVE_RIGHT,
-    MOVE_UP,
-    RESET,
-    RIGHT,
-    SET_DIS_DIRECTION,
-    STOP_GAME,
-    UP
-  } from "../actions";
+  CallEffect,
+  delay,
+  put,
+  PutEffect,
+  SimpleEffect,
+  takeLatest
+} from "redux-saga/effects";
+import {
+  DOWN,
+  ISnakeCoord,
+  LEFT,
+  MOVE_DOWN,
+  MOVE_LEFT,
+  MOVE_RIGHT,
+  MOVE_UP,
+  RESET,
+  RIGHT,
+  setDisDirection, STOP_GAME,
+  UP
+} from "../actions";
 
   export function* moveSaga(params: {
     type: string;
@@ -37,31 +36,19 @@ import {
       });
       switch (params.type.split("_")[1]) {
         case RIGHT:
-          yield put({
-            type: SET_DIS_DIRECTION,
-            payload: LEFT
-          });
+          yield put(setDisDirection(LEFT));
           break;
 
         case LEFT:
-          yield put({
-            type: SET_DIS_DIRECTION,
-            payload: RIGHT
-          });
+          yield put(setDisDirection(RIGHT));
           break;
 
         case UP:
-          yield put({
-            type: SET_DIS_DIRECTION,
-            payload: DOWN
-          });
+          yield put(setDisDirection(DOWN));
           break;
 
         case DOWN:
-          yield put({
-            type: SET_DIS_DIRECTION,
-            payload: UP
-          });
+          yield put(setDisDirection(UP));
           break;
       }
       yield delay(100);
