@@ -2,23 +2,26 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   increaseSnake,
+  INCREMENT_SCORE,
   makeMove,
   MOVE_DOWN,
   MOVE_LEFT,
   MOVE_RIGHT,
   MOVE_UP,
   resetGame,
+  RESET_SCORE,
   scoreUpdates,
   stopGame,
 } from "../store/actions";
 import { IGlobalState } from "../store/reducers";
 import {
-  clearCanvas,
+  clearBoard,
   drawObject,
   generateRandomPosition,
   hasSnakeCollided,
   IObjectBody,
 } from "../utils";
+import Instruction from "./Instructions";
 
 export interface ICanvasBoard {
   height: number;
@@ -28,13 +31,12 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const dispatch = useDispatch();
   const snake1 = useSelector((state: IGlobalState) => state.snake);
   const disallowedDirection = useSelector(
-    (state: any) => state.disallowedDirection
+    (state: IGlobalState) => state.disallowedDirection
   );
 
-  // const [ds, setDs] = useState<string>("");
   const [gameEnded, setGameEnded] = useState<boolean>(false);
   const [pos, setPos] = useState<IObjectBody>(
-    generateRandomPosition(width - 10, height - 10)
+    generateRandomPosition(width - 20, height - 20)
   );
   const [isConsumed, setIsConsumed] = useState<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -63,39 +65,53 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
 
   const handleKeyEvents = useCallback(
     (event: KeyboardEvent) => {
-      switch (event.key) {
-        case "w":
-          moveSnake(0, -10, disallowedDirection);
-          break;
-        case "s":
-          moveSnake(0, 10, disallowedDirection);
-          break;
-        case "a":
-          moveSnake(-10, 0, disallowedDirection);
-          break;
-        case "d":
-          event.preventDefault();
-          moveSnake(10, 0, disallowedDirection);
-          break;
+      if (disallowedDirection) {
+        switch (event.key) {
+          case "w":
+            moveSnake(0, -20, disallowedDirection);
+            break;
+          case "s":
+            moveSnake(0, 20, disallowedDirection);
+            break;
+          case "a":
+            moveSnake(-20, 0, disallowedDirection);
+            break;
+          case "d":
+            event.preventDefault();
+            moveSnake(20, 0, disallowedDirection);
+            break;
+        }
+      } else {
+        if (
+          disallowedDirection !== "LEFT" &&
+          disallowedDirection !== "UP" &&
+          disallowedDirection !== "DOWN" &&
+          event.key === "d"
+        )
+          moveSnake(20, 0, disallowedDirection); //Move RIGHT at start
       }
     },
     [disallowedDirection, moveSnake]
   );
 
-  const resetBoard = () => {
+  const resetBoard = useCallback(() => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
-    dispatch(scoreUpdates("RESET_SCORE"));
-    clearCanvas(context);
-    drawObject(context, snake1);
-    drawObject(context, [generateRandomPosition(width - 10, height - 10)]); //Draws object randomly
+    dispatch(scoreUpdates(RESET_SCORE));
+    clearBoard(context);
+    drawObject(context, snake1, "#91C483");
+    drawObject(
+      context,
+      [generateRandomPosition(width - 20, height - 20)],
+      "#676FA3"
+    ); //Draws object randomly
     window.addEventListener("keypress", handleKeyEvents);
-  };
+  }, [context, dispatch, handleKeyEvents, height, snake1, width]);
 
   useEffect(() => {
     //Generate new object
     if (isConsumed) {
-      const posi = generateRandomPosition(width - 10, height - 10);
+      const posi = generateRandomPosition(width - 20, height - 20);
       setPos(posi);
       setIsConsumed(false);
 
@@ -103,16 +119,16 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
       dispatch(increaseSnake());
 
       //Increment the score
-      dispatch(scoreUpdates("INCREMENT_SCORE"));
+      dispatch(scoreUpdates(INCREMENT_SCORE));
     }
   }, [isConsumed, pos, height, width, dispatch]);
 
   useEffect(() => {
     //Draw on canvas each time
     setContext(canvasRef.current && canvasRef.current.getContext("2d"));
-    clearCanvas(context);
-    drawObject(context, snake1);
-    drawObject(context, [pos]); //Draws object randomly
+    clearBoard(context);
+    drawObject(context, snake1, "#91C483");
+    drawObject(context, [pos], "#676FA3"); //Draws object randomly
 
     //When the object is consumed
     if (snake1[0].x === pos?.x && snake1[0].y === pos?.y) {
@@ -121,12 +137,11 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
 
     if (
       hasSnakeCollided(snake1, snake1[0]) ||
-      (snake1[0].x >= width ||
-        snake1[0].x <= 0 ||
-        snake1[0].y <= 0 ||
-        snake1[0].y >= height)
+      snake1[0].x >= width ||
+      snake1[0].x <= 0 ||
+      snake1[0].y <= 0 ||
+      snake1[0].y >= height
     ) {
-      console.log("LINE 127");
       setGameEnded(true);
       dispatch(stopGame());
       window.removeEventListener("keypress", handleKeyEvents);
@@ -151,8 +166,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
         width={width}
         height={height}
       />
-      <button onClick={() => resetBoard()}>Reset</button>
-      Border Touched: {JSON.stringify(gameEnded)}
+      <Instruction resetBoard={resetBoard} />
     </>
   );
 };
