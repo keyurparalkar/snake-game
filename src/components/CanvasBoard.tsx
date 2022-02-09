@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   increaseSnake,
+  INCREMENT_SCORE,
   makeMove,
   MOVE_DOWN,
   MOVE_LEFT,
   MOVE_RIGHT,
   MOVE_UP,
   resetGame,
+  RESET_SCORE,
   scoreUpdates,
   stopGame,
 } from "../store/actions";
@@ -95,7 +97,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
   const resetBoard = useCallback(() => {
     window.removeEventListener("keypress", handleKeyEvents);
     dispatch(resetGame());
-    dispatch(scoreUpdates("RESET_SCORE"));
+    dispatch(scoreUpdates(RESET_SCORE));
     clearBoard(context);
     drawObject(context, snake1, "#91C483");
     drawObject(
@@ -117,7 +119,7 @@ const CanvasBoard = ({ height, width }: ICanvasBoard) => {
       dispatch(increaseSnake());
 
       //Increment the score
-      dispatch(scoreUpdates("INCREMENT_SCORE"));
+      dispatch(scoreUpdates(INCREMENT_SCORE));
     }
   }, [isConsumed, pos, height, width, dispatch]);
 
